@@ -1,11 +1,18 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Forms;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace OnScreenKeyboardManager
 {
+    /// <summary>
+    /// Listens for OS level input focus events, and raise the TextBoxGetFocus and TextBoxLostFocus when an item 
+    /// of our interest is involved. 
+    /// We are looking for known Window class names, and only raise events on the ones we are interested in
+    /// </summary>
     class TextBoxFocusTracker
     {
         #region NativeMethods
@@ -47,22 +54,33 @@ namespace OnScreenKeyboardManager
 
         static System.Collections.Specialized.StringCollection TextBoxes = SetUpTextBoxLikeControls();
 
+        /// <summary>
+        /// These are the events that we are actually interested in.
+        /// </summary>
+        /// <returns></returns>
         static private System.Collections.Specialized.StringCollection SetUpTextBoxLikeControls()
         {
             var TextBoxes = new System.Collections.Specialized.StringCollection();
-            TextBoxes.Add("Edit"); //Classic Win32 Textbox
+            TextBoxes.Add("Edit"); //Classic Win32 Textbox, such as Notepad
             TextBoxes.Add("Windows.UI.Input.InputSite.WindowClass"); //Windows Terminal/Powershell
-            //TextBoxes.Add("ConsoleWindowClass"); //Good old Cmd; Has issues
-            TextBoxes.Add("WindowsForms8.EDIT"); //Winforms
-            TextBoxes.Add("WindowsForms9.EDIT"); //Winforms
-            TextBoxes.Add("WindowsForms10.EDIT"); //Winforms
-            TextBoxes.Add("WindowsForms11.EDIT"); //Winforms
-            TextBoxes.Add("WindowsForms12.EDIT"); //Winforms
-            TextBoxes.Add("Scintilla"); //Winforms
-
+            TextBoxes.Add("ConsoleWindowClass"); //Good old Cmd; Has issues
+            TextBoxes.Add("WindowsForms8.EDIT"); //WinForms
+            TextBoxes.Add("WindowsForms9.EDIT"); //WinForms
+            TextBoxes.Add("WindowsForms10.EDIT"); //WinForms
+            TextBoxes.Add("WindowsForms11.EDIT"); //WinForms
+            TextBoxes.Add("WindowsForms12.EDIT"); //WinForms
+            TextBoxes.Add("Scintilla"); //The code editor "Scintilla"
+            TextBoxes.Add("Windows.UI.Core.CoreComponentInputSource"); //Windows start menu
+            TextBoxes.Add("Windows.UI.Input.InputSite.WindowClass");//Windows start menu
+            TextBoxes.Add("Windows.UI.Core.CoreWindow");   //Most WinUI windows, we do not have access to the individual Edit control Class name, because it is handled by WinUI
             return TextBoxes;
         }
 
+        /// <summary>
+        /// Check if the Window class name is one that is in our list
+        /// </summary>
+        /// <param name="ClassName"></param>
+        /// <returns></returns>
         private static bool isTextBox(string ClassName)
         {
             foreach (var tb in TextBoxes)
@@ -85,7 +103,7 @@ namespace OnScreenKeyboardManager
             }
 
             //Check if we are interested
-            System.Diagnostics.Trace.WriteLine("Receive event from: " + ClassName.ToString());
+            System.Diagnostics.Trace.WriteLine(string.Format("Receive event type '{0}' from '{1}'", eventType, ClassName.ToString()));
             if (isTextBox(ClassName.ToString()))
             {
                 TextBoxGetFocus.Invoke(null, new TextBoxFocusEventArgs() { ClassName = ClassName.ToString(), hwnd = hwnd });

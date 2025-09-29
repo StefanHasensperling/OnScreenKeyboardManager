@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace OnScreenKeyboardManager
 {
+    /// <summary>
+    /// Handles showing and hiding of the On screen keyboard whenever an "text box like" control gets or loses input focus
+    /// </summary>
     class OnScreenKeyboardHandler
     {
-        static System.Diagnostics.Process OSK;
-        static string OKSFilename = "FreeVK.exe";
-        static string OSKWinClass = null; //"TMainForm";
-        static string OSKWinTitle = "Free Virtual Keyboard";
+        static string OKSFilename = "OSK";
 
+        static string OSKWinClass = "OSKMainClass"; 
+        static string OSKWinTitle = "";
+
+        /// <summary>4f
+        /// Set up handlers and start listening for focus event
+        /// </summary>
         public static void Start()
         {
             TextBoxFocusTracker.TextBoxGetFocus += (sender, e) =>
@@ -42,10 +51,7 @@ namespace OnScreenKeyboardManager
         {
             try
             {
-                if (OSK != null && !OSK.HasExited) return; //it is still visible
-                OSK = System.Diagnostics.Process.Start(OKSFilename);
-                OSK.WaitForInputIdle();
-                System.Threading.Thread.Sleep(500);
+                System.Diagnostics.Process.Start(OKSFilename);
             }
             catch (Exception ex)
             {
@@ -57,9 +63,9 @@ namespace OnScreenKeyboardManager
         {
             try
             {
-                if (OSK == null || OSK.HasExited) return; //it is already terminated visible
+                var OSK = Process.GetProcessesByName(OKSFilename).FirstOrDefault();
+                if (OSK == null) return; //it is already terminated visible
                 OSK.Kill();
-                OSK.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -72,12 +78,22 @@ namespace OnScreenKeyboardManager
             //we do not do this, because Touch monitors usually only have one monitor...
         }
 
+        /// <summary>
+        /// Checks if the given Window class name belongs to the On-Screen keyboard, 
+        /// meaning the OSK got the focus
+        /// </summary>
+        /// <returns></returns>
         private static bool isClassNameOSK(string ClassName)
         {
             if (string.IsNullOrWhiteSpace(OSKWinClass)) return false;
-            return ClassName.StartsWith(ClassName);
+            return ClassName.StartsWith(OSKWinClass);
         }
 
+        /// <summary>
+        /// Checks if the given Window Handle belongs to the On-Screen keyboard, 
+        /// meaning the OSK got the focus
+        /// </summary>
+        /// <returns></returns>
         private static bool isHwndOsk(IntPtr hwnd)
         {
             if (string.IsNullOrWhiteSpace(OSKWinTitle)) return false;
