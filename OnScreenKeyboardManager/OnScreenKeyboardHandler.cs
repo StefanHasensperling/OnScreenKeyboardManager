@@ -14,10 +14,9 @@ namespace OnScreenKeyboardManager
     /// </summary>
     class OnScreenKeyboardHandler
     {
-        static string OKSFilename = "OSK";
-
-        static string OSKWinClass = "OSKMainClass"; 
-        static string OSKWinTitle = "";
+        static string OKSFilename = Properties.Settings.Default.OskFileName;
+        static string OSKWinClass = Properties.Settings.Default.OSKWinClass;
+        static string OSKWinTitle = Properties.Settings.Default.OSKWinTitle;
 
         /// <summary>4f
         /// Set up handlers and start listening for focus event
@@ -63,6 +62,7 @@ namespace OnScreenKeyboardManager
         {
             try
             {
+                if (Properties.Settings.Default.DoNotCloseOKS) return;
                 var OSK = Process.GetProcessesByName(OKSFilename).FirstOrDefault();
                 if (OSK == null) return; //it is already terminated visible
                 OSK.Kill();

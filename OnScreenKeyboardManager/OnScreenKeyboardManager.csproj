@@ -65,6 +65,11 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="OnScreenKeyboardHandler.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="TextBoxFocusEventArgs.cs" />
     <Compile Include="TextBoxFocusTracker.cs" />
     <Compile Include="Program.cs" />
@@ -91,6 +96,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="OnScreenKeuboardManager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
