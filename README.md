@@ -15,9 +15,7 @@ I tried to use the windows integrated tools "OSK.exe" and "TabTip.exe", but they
 Since i could not find an satisfactory solution, i just made one myself.
 
 # Installation
-Currently it relies on the "On-Screen-Keyboard" from https://freevirtualkeyboard.com. You have to download it separately and put it in the same directory. Please give credit to them for their most excelent work!
-
-Apart from that, it is just an Exe file, with no dependencies (except standard Windows libraries).
+It is just an Exe file, with no dependencies (except standard Windows libraries).
 You start the application and it runs in the background until you focus an Text box. Usually you should start it manually or make an Scheduled task when the user logs on.
  
 # How it works
